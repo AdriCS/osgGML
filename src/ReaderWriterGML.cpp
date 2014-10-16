@@ -1,50 +1,51 @@
+#include "ReaderWriterGML.h"
+
 #include <osgDB/FileUtils>
 #include <osgDB/FileNameUtils>
-#include <osgDB/ReaderWriter>
+// #include <osgDB/ReaderWriter>
 
 #include "GmlOptions.h"
 #include "GraphVisitor.h"
 
-class ReaderWriterGML: public osgDB::ReaderWriter {
-public:
-	virtual const char* className() const {
+	const char* ReaderWriterGML::className() const {
 		return "GML Writer";
 	}
-	virtual bool acceptsExtension( const std::string& extension ) const {
+	bool ReaderWriterGML::acceptsExtension( const std::string& extension ) const {
 		return osgDB::equalCaseInsensitive( extension, "gml" );
 	}
-	virtual WriteResutl writeNode(
+	osgDB::ReaderWriter::WriteResult ReaderWriterGML::writeNode(
 		const osg::Node& node,
 		const std::string& filename,
-		const osgDB::Options* = NULL
+		const osgDB::Options* options
 	) const {
 		const std::string ext = osgDB::getFileExtension( filename );
 		if( !acceptsExtension( ext ) ) {
-			return osgDB::WriteResult::FILE_NOT_HANDLED;
+			return osgDB::ReaderWriter::WriteResult::FILE_NOT_HANDLED;
 		}
 
 		osgDB::ofstream out( filename.c_str(), std::ios::out );
 		if( !out ) {
-			return osgDB::WriteResult::ERROR_IN_WRITING_FILE;
+			return osgDB::ReaderWriter::WriteResult::ERROR_IN_WRITING_FILE;
 		}
 		
 		// check opts;
-		osg::ref_ptr<osgGML::GmlOptions> goptions = NULL;
+		osgGML::GmlOptions::Ptr goptions = NULL;
 		if(
 			osgGML::GmlOptions* opts = dynamic_cast<osgGML::GmlOptions*>(
-				const_cast<osgDB::Options*>( options )
+				const_cast<osgDB::Options*>( options ) )
 		) {
-			goptions = new osgGML::GmlOptions( *options );
+			goptions = new osgGML::GmlOptions( *opts );
 		} else {
 			goptions = new osgGML::GmlOptions;
 		}
 
 		osgGML::GraphVisitor vis;
 		vis.setOptions( goptions.get() );
-		vis.visitFrom( node, out );
+		vis.visitFrom( *const_cast<osg::Node*>( &node ), out );
 
-		return osgDB::WriteResult( osgDB::WriteResult::FILE_SAVED );
+		return osgDB::ReaderWriter::WriteResult(
+			osgDB::ReaderWriter::WriteResult::FILE_SAVED
+		);
 	}
-};
-
-REGISTER_OSGPLUGIN(gml, ReaderWriterGML)
+	
+	REGISTER_OSGPLUGIN(gml, ReaderWriterGML)

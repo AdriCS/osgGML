@@ -14,22 +14,6 @@ namespace osgGML {
 		comment = co;
 		return true;
 	}
-	
-	std::ostream& operator<<(
-		std::ostream& out,
-		const GlobalOptions& go
-	) {
-		if( go.hasCreator() ) {
-			out << "\tCreator " << go.getCreator() << '\n';
-		}
-		if( go.hasComment() ) {
-			out << "\tcomment " << go.getComment() << '\n';
-		}
-		out << "\tVersion " << go.getVersion() << '\n';
-		out << "\tdirected " << ( go.isDirected() ? 1 : 0 ) << '\n';
-		
-		return out;
-	}	
 	/*****************************************************/
 
 	// Topology
@@ -115,7 +99,7 @@ namespace osgGML {
 			"Drawable",
 			[]() -> Topology {
 				Topology topo;
-				topo.setOutline( Blue );
+				topo.setOutline( Topology::Blue );
 				return topo;
 			}()
 		);
@@ -123,7 +107,7 @@ namespace osgGML {
 			"Geode",
 			[]() -> Topology {
 				Topology topo;
-				topo.setOutline( Red );
+				topo.setOutline( Topology::Red );
 				return topo;
 			}()
 		);
@@ -131,8 +115,8 @@ namespace osgGML {
 			"StateSet",
 			[]() -> Topology {
 				Topology topo( 
-					Oval,
-					Dashed
+					Topology::Oval,
+					Topology::Dashed
 				);
 				topo.setOutline( Topology::Green );
 				return topo;

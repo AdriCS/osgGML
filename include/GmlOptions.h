@@ -8,12 +8,12 @@
 #include "Setup.h"
 
 #include <map>
-#include <ostream>
 #include <string>
 
 #include <osgDB/Options>
 
 namespace osgGML {
+	/// \todo For now, supports only 1 graph.
 	class GlobalOptions {
 	public:
 		GlobalOptions(
@@ -74,11 +74,6 @@ namespace osgGML {
 		int         version;
 		bool        directed;
 	};
-
-	std::ostream& operator<<(
-		std::ostream& out,
-		const GlobalOptions& go
-	);
 		
 	class Topology {
 	public:
@@ -164,10 +159,10 @@ namespace osgGML {
 		// GraphicOptions( const GraphicOptions& go );
 		// GraphicOptions& operator=( const GraphicOptions& go );
 #ifndef USE_LAMBDAS
-		void addDefaultTopology();
-		void addDrawableTopology();
-		void addGeodeTopology();
-		void addStateSetTopology();
+		void addDefaultTopology()  DEPRECATED;
+		void addDrawableTopology() DEPRECATED;
+		void addGeodeTopology()    DEPRECATED;
+		void addStateSetTopology() DEPRECATED;
 #endif		
 	private:
 		// Special topologies.

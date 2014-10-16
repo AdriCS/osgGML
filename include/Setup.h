@@ -1,9 +1,11 @@
 #ifndef __SETUP_H__
 #define __SETUP_H__
 
-#if __cplusplus > 199711L && defined( __GXX_EXPERIMENTAL_CXX0X__ )
-	#error NOPE
+#if __cplusplus <= 199711L && defined( __GXX_EXPERIMENTAL_CXX0X__ )
+	#warning USING C++0X
 	#define USE_LAMBDAS
 #endif
+
+#define DEPRECATED __attribute__ ( ( deprecated) )
 
 #endif

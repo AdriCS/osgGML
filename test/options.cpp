@@ -1,14 +1,17 @@
 #include "GmlOptions.h"
+#include "GmlOptionsIO.h"
 
 #include <iostream>
 
 int main( int argc, char** argv ) {
 	osgGML::GmlOptions::Ptr options = new osgGML::GmlOptions;
-	std::cout << "Global, version/creator: "
+	std::cout << "Global options, version/creator: "
 			  << options->globalOptions().getVersion()
 			  << " / " << options->globalOptions().getCreator()
 			  << std::endl
 	;
+	
+	std::cout << "Global Options: " << options->globalOptions() << std::endl;
 	
 	const osgGML::GraphicOptions& graphics = options->graphicOptions();
 	const osgGML::Topology& deftop = graphics.getDefault();
@@ -30,7 +33,7 @@ int main( int argc, char** argv ) {
 			  << std::endl
     ;
 	topo = graphics.getTopology( "Unknown" );
-	std::cout << "Unknown topo: " << topo.getBox() << ", "
+	std::cout << "Unknown topo (goes to Default): " << topo.getBox() << ", "
 			  << topo.getEdge() << ", " << topo.getFill()
 			  << ", " << topo.getOutline()
 			  << std::endl
