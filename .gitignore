@@ -26,3 +26,7 @@
 *.exe
 *.out
 *.app
+
+# Custom
+*.gml
+*.osg
