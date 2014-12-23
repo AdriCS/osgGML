@@ -1,5 +1,7 @@
 #include "GmlOptions.h"
 
+#include <cstdio>
+
 namespace osgGML {
 	// GlobalOptions
 
@@ -56,6 +58,7 @@ namespace osgGML {
 	}
 
 	std::string Topology::colourToString( const Colour c ) const {
+	#if 0
 		std::string toret;
 
 		switch( c ) {
@@ -77,6 +80,25 @@ namespace osgGML {
 				break;
 		}
 		return toret;
+	#endif
+		char tmp[ 8 ];
+
+		switch( c ) {
+			case Black:
+				std::snprintf( tmp, sizeof( tmp ), "#%02x%02x%02x", 0, 0, 0 );
+				break;
+			case Blue:
+				std::snprintf(tmp, sizeof(tmp), "#%02x%02x%02x", 0, 0, 255 );
+				break;
+			case Green:
+				std::snprintf(tmp, sizeof(tmp), "#%02x%02x%02x", 0, 255, 0 );
+				break;
+			case White:
+			default:
+				std::snprintf(tmp, sizeof(tmp), "#%02x%02x%02x", 255, 255, 255 );
+				break;
+		}
+		return std::string( tmp );
 	}
 
 	/*****************************************************/
