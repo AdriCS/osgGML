@@ -93,9 +93,12 @@ namespace osgGML {
 			case Green:
 				std::snprintf(tmp, sizeof(tmp), "#%02x%02x%02x", 0, 255, 0 );
 				break;
+            case Red:
+                std::snprintf(tmp, sizeof(tmp), "#%02x%02x%02x", 255, 0, 0 );
+                break;
 			case White:
 			default:
-				std::snprintf(tmp, sizeof(tmp), "#%02x%02x%02x", 255, 255, 255 );
+                std::snprintf(tmp, sizeof(tmp), "#%02x%02x%02x", 255, 255, 255 );
 				break;
 		}
 		return std::string( tmp );
