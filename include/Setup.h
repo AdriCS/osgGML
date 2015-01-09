@@ -6,6 +6,8 @@
 	#define USE_LAMBDAS
 #endif
 
-#define DEPRECATED __attribute__ ( ( deprecated) )
+#ifdef __GNUC__
+    #define DEPRECATED __attribute__ ( ( deprecated) )
+#endif
 
 #endif
