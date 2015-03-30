@@ -7,5 +7,13 @@
 
 BOOST_AUTO_TEST_CASE(DefaultOptions)
 {
-	BOOST_CHECK(1 == 1);
+	osgGML::GmlOptions::Ptr opts = new osgGML::GmlOptions;
+	osgGML::GlobalOptions gopts = opts->globalOptions();
+	
+	BOOST_CHECK(gopts.hasCreator());
+	BOOST_CHECK(1 == gopts.getVersion());
+	BOOST_CHECK(true == gopts.isDirected());
+	
+	// Just to see what happens with BOOST_CHECK when it's false.
+	BOOST_CHECK(gopts.hasComment());
 }
