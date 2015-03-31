@@ -4,9 +4,6 @@ project(OptionsTesting)
 
 enable_testing()
 
-MESSAGE(STATUS "CMAKE_CURRENT_SOURCE_DIR = ${CMAKE_CURRENT_SOURCE_DIR}")
-file(GLOB TEST_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
-
 set(CMAKE_BUILD_TYPE "RELEASE")
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
@@ -33,10 +30,18 @@ set(DEPENDENCIES ${DEPENDENCIES} ${OPENSCENEGRAPH_LIBRARIES})
 # work.
 include_directories(../../include)
 include_directories(../../src)
-
+add_library(Options ../../src/GmlOptions.cpp ../../src/GmlOptionsIO.cpp)
+target_link_libraries(Options release ${DEPENDENCIES})
+set(DEPENDENCIES ${DEPENDENCIES} Options)
 
 #add_executable(testOptions testOptions.cpp)
 #target_link_libraries(testOptions ${DEPENDENCIES})
+
+MESSAGE(STATUS "CMAKE_CURRENT_BINARY_DIR = ${CMAKE_CURRENT_BINARY_DIR}")
+MESSAGE(STATUS "CMAKE_CURRENT_SOURCE_DIR = ${CMAKE_CURRENT_SOURCE_DIR}")
+MESSAGE(STATUS "INSTALL PREFIX = ${CMAKE_INSTALL_PREFIX}")
+
+file(GLOB TEST_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
 
 #Run through each source
 foreach(testSrc ${TEST_SRCS})
@@ -53,5 +58,5 @@ foreach(testSrc ${TEST_SRCS})
 
         #Finally add it to test execution - 
         #Notice the WORKING_DIRECTORY and COMMAND
-        add_test(NAME ${testName} COMMAND ${testName})
+        add_test(NAME ${testName} COMMAND ${CMAKE_INSTALL_PREFIX}/bin/${testName})
 endforeach(testSrc)
