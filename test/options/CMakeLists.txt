@@ -9,9 +9,16 @@ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
 link_directories(${CMAKE_BINARY_DIR}/lib)
 
-set(BOOST_ROOT "D:/PROYECTOS/SITEGI/LIBRERIAS/Boost")
+find_package(osgGML REQUIRED)
+include_directories(${OSGGML_INCLUDE_DIRS})
+link_directories(${OSGGML_LIBRARY_DIRS})
+set(DEPENDENCIES ${DEPENDENCIES} ${OSGGML_LIBRARIES})
 
 find_package(Boost REQUIRED COMPONENTS unit_test_framework)
+if(NOT Boost_FOUND)
+  set(BOOST_ROOT "D:/PROYECTOS/SITEGI/LIBRERIAS/Boost")
+endif()
+
 include_directories (${Boost_INCLUDE_DIRS})
 set(DEPENDENCIES ${Boost_LIBRARIES})
 #add_definitions(-DBOOST_TEST_DYN_LINK)
@@ -24,15 +31,6 @@ find_package(OpenSceneGraph REQUIRED COMPONENTS osg osgDB osgUtil OpenThreads)
 include_directories(${OPENSCENEGRAPH_INCLUDE_DIRS})
 link_directories(${OPENSCENEGRAPH_LIBRARY_DIRS})
 set(DEPENDENCIES ${DEPENDENCIES} ${OPENSCENEGRAPH_LIBRARIES})
-
-# Should do first the CMakeLists for the plugin, instead of building it everytime.
-# THIS IS THE NEXT THING TO DO, but for now I just want to check if the tests
-# work.
-include_directories(../../include)
-include_directories(../../src)
-add_library(Options ../../src/GmlOptions.cpp ../../src/GmlOptionsIO.cpp)
-target_link_libraries(Options ${DEPENDENCIES})
-set(DEPENDENCIES ${DEPENDENCIES} Options)
 
 #add_executable(testOptions testOptions.cpp)
 #target_link_libraries(testOptions ${DEPENDENCIES})

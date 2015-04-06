@@ -14,6 +14,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif(NOT CMAKE_BUILD_TYPE)
 
 set(LIBRARY_NAME "osgGML")
+set(EXPORT_NAME "OSGGML")
 set(CMAKE_VERBOSE_MAKEFILE ON CACHE BOOL "" FORCE)
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
@@ -40,7 +41,7 @@ endif()
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
 
-if(USE_LAMBDAS)
+if(BUILD_USE_LAMBDAS)
   # add_definitions(-DUSE_LAMBDAS) # NOPE. I already do this in 'Setup.h' if there is support for C++0x
   # Compiler-specific C++11 activation.
 	if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
@@ -52,7 +53,7 @@ if(USE_LAMBDAS)
 	      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
 		endif()
 	endif()
-endif(USE_LAMBDAS)
+endif()
 
 find_package(OpenSceneGraph REQUIRED COMPONENTS
                  osg
@@ -81,8 +82,16 @@ add_library(${LIBRARY_NAME} ./src/GmlOptions.cpp
 target_link_libraries(${LIBRARY_NAME} ${DEPENDENCIES})
 
 INSTALL(TARGETS ${LIBRARY_NAME}
+	    EXPORT ${EXPORT_NAME}
         RUNTIME DESTINATION bin
 		LIBRARY DESTINATION lib
 		ARCHIVE DESTINATION lib
 )
+export(TARGETS ${LIBRARY_NAME} FILE "${CMAKE_BINARY_DIR}/osgGML-config.cmake")
+INSTALL(EXPORT ${EXPORT_NAME} DESTINATION lib/osgGML-config.cmake)
 INSTALL(DIRECTORY ./include DESTINATION ${CMAKE_INSTALL_PREFIX})
+
+#
+if(BUILD_TESTS)
+	message(STATUS "BUILD TESTS IS ENABLED")
+endif()
