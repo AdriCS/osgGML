@@ -1,0 +1,34 @@
+language: cpp
+compiler: gcc
+
+before_install:
+ - sudo apt-get update -qq
+ - sudo apt-get install cmake openscenegraph libopenscenegraph-dev libboost-all-dev
+
+before_script:
+ - mkdir build
+ - cd build
+ - cmake ..
+
+script: make
+
+notifications:
+ email:
+  - acsantome@gmail.com
+ on_success: never
+ on_failure: never
+
+os: linux
+
+# DO THIS!
+# blacklist
+#branches:
+# except:
+#  - legacy
+#  - experimental
+
+# whitelist
+#branches:
+# only:
+#  - master
+#  - stable

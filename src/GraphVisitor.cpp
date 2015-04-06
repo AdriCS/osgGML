@@ -1,5 +1,6 @@
 #include "GraphVisitor.h"
 
+#include "DebugUtils.h"
 #include "GmlOptions.h"
 #include "GmlOptionsIO.h"
 
@@ -37,7 +38,8 @@ namespace osgGML {
 	}
 	
 	void GraphVisitor::apply( osg::Node& node ) {
-		std::cout << " APPLY NODE" << std::endl;
+        DebugUtils::print( " APPLY NODE" );
+
 		int id( -1 );
 		if( getOrCreateId( &node, id ) ) {
 			handle( node, id );
@@ -46,7 +48,8 @@ namespace osgGML {
 	}
 	
 	void GraphVisitor::apply( osg::Geode& geode ) {
-		std::cout << " APPLY GEODE" << std::endl;
+        DebugUtils::print( " APPLY GEODE" );
+
 		int id( -1 );
 		if( getOrCreateId( &geode, id ) ) {
 			handle( geode, id );
