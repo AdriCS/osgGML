@@ -3,7 +3,7 @@ compiler: gcc
 
 before_install:
  - sudo apt-get update -qq
- - sudo apt-get build-dep cmake openscenegraph libopenscenegraph-dev libboost-all-dev
+ - sudo apt-get install cmake openscenegraph libopenscenegraph-dev libboost-all-dev
 
 before_script:
  - mkdir build
