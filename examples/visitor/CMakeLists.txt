@@ -22,9 +22,9 @@ set(DEPENDENCIES ${OPENSCENEGRAPH_LIBRARIES})
 
 include_directories(../../include)
 add_library(Options ../../src/GmlOptions.cpp ../../src/GmlOptionsIO.cpp)
-target_link_libraries(Options release ${DEPENDENCIES})
+target_link_libraries(Options ${DEPENDENCIES})
 add_library(Visitor SHARED ../../src/GraphVisitor.cpp ../../src/ReaderWriterGML.cpp)
-target_link_libraries(Visitor Options release ${DEPENDENCIES})
+target_link_libraries(Visitor Options ${DEPENDENCIES})
 
 add_executable(visitor_example visitor.cpp)
 target_link_libraries(visitor_example Options Visitor ${DEPENDENCIES})

@@ -31,7 +31,7 @@ set(DEPENDENCIES ${DEPENDENCIES} ${OPENSCENEGRAPH_LIBRARIES})
 include_directories(../../include)
 include_directories(../../src)
 add_library(Options ../../src/GmlOptions.cpp ../../src/GmlOptionsIO.cpp)
-target_link_libraries(Options release ${DEPENDENCIES})
+target_link_libraries(Options ${DEPENDENCIES})
 set(DEPENDENCIES ${DEPENDENCIES} Options)
 
 #add_executable(testOptions testOptions.cpp)
