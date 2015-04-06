@@ -5,6 +5,9 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 project(osgGML)
 
 option(BUILD_SHARED_LIBS "Build shared libs" ON)
+option(BUILD_EXAMPLES OFF)
+option(BUILD_TESTS OFF)
+option(BUILD_USE_LAMBDAS OFF)
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." FORCE)
@@ -37,7 +40,6 @@ endif()
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
 
-option(USE_LAMBDAS OFF)
 if(USE_LAMBDAS)
   # add_definitions(-DUSE_LAMBDAS) # NOPE. I already do this in 'Setup.h' if there is support for C++0x
   # Compiler-specific C++11 activation.
