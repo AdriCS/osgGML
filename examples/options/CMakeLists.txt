@@ -3,9 +3,6 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 project(Options)
 
 set(CMAKE_BUILD_TYPE "RELEASE")
-set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
-set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
-link_directories(${CMAKE_BINARY_DIR}/lib)
 
 find_package(osgGML REQUIRED)
 if(osgGML_FOUND)
