@@ -16,6 +16,10 @@ namespace DebugUtils {
         if( flush ) {
             ost << std::flush;
         }
+#else
+		static_cast<void>(msg);
+		static_cast<void>(ost);
+		static_cast<void>(flush);
 #endif
     }
 }

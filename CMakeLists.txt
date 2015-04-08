@@ -4,6 +4,8 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
 project(osgGML)
 
+message(STATUS "${PROJECT_SOURCE_DIR}")
+
 option(BUILD_SHARED_LIBS "Build shared libs" ON)
 option(BUILD_EXAMPLES OFF)
 option(BUILD_TESTS OFF)
@@ -14,12 +16,24 @@ if(NOT CMAKE_BUILD_TYPE)
 endif(NOT CMAKE_BUILD_TYPE)
 
 set(LIBRARY_NAME "osgGML")
-set(EXPORT_NAME "OSGGML")
+set(EXPORT_NAME "depends")
 set(CMAKE_VERBOSE_MAKEFILE ON CACHE BOOL "" FORCE)
-set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
-set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
-link_directories(${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_COLOR_MAKEFILE ON)
+mark_as_advanced(CMAKE_VERBOSE_MAKEFILE)
 
+ # Common locatoins for Unix and Mac OS X
+set(DEFAULT_BIN_SUBDIR bin)
+set(DEFAULT_LIB_SUBDIR lib)
+set(DEFAULT_SHARE_SUBDIR share/cmake)
+set(DEFAULT_INCLUDE_SUBDIR include)
+set(OSGGML_BIN_SUBDIR ${DEFAULT_BIN_SUBDIR} CACHE STRING
+"Subdirectory where executables will be installed")
+set(OSGGML_LIB_SUBDIR ${DEFAULT_LIB_SUBDIR} CACHE STRING
+"Subdirectory where libraries will be installed")
+set(OSGGML_INCLUDE_SUBDIR ${DEFAULT_INCLUDE_SUBDIR} CACHE STRING
+"Subdirectory where header files will be installed")
+set(OSGGML_SHARE_SUBDIR ${DEFAULT_SHARE_SUBDIR} CACHE STRING
+"Subdirectory where data will be installed")
 ##
 # Set the build postfix extension according to what configuration is being built.
 set(CMAKE_DEBUG_POSTFIX "d" CACHE STRING "add a postfix, usually d on windows")
@@ -58,10 +72,10 @@ endif()
 find_package(OpenSceneGraph REQUIRED COMPONENTS
                  osg
 				 osgDB
-				 osgGA
-				 osgText
-				 osgUtil
-                 osgViewer
+#				 osgGA
+#				 osgText
+#				 osgUtil
+#                 osgViewer
 				 OpenThreads
 )
 
@@ -72,26 +86,48 @@ link_directories(${OPENSCENEGRAPH_BINARY_DIRS}/osgPlugins-3.2.1/)
 set(DEPENDENCIES ${OPENSCENEGRAPH_LIBRARIES})
 
 ##
+set(osgGML_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include")
+set(osgGML_SOURCE_DIRS "${PROJECT_SOURCE_DIR}/src")
 
-include_directories(./include)
-add_library(${LIBRARY_NAME} ./src/GmlOptions.cpp
-                   ./src/GmlOptionsIO.cpp
-                   ./src/GraphVisitor.cpp
-				   ./src/ReaderWriterGML.cpp
+set(HEADERS ${osgGML_INCLUDE_DIRS}/DebugUtils.h
+                 ${osgGML_INCLUDE_DIRS}/GmlOptions.h
+				 ${osgGML_INCLUDE_DIRS}/GmlOptionsIO.h
+				 ${osgGML_INCLUDE_DIRS}/GraphVisitor.h
+				 ${osgGML_INCLUDE_DIRS}/ReaderWriterGML.h
+				 ${osgGML_INCLUDE_DIRS}/Setup.h
 )
+set(SOURCES ${osgGML_SOURCE_DIRS}/GmlOptions.cpp
+            ${osgGML_SOURCE_DIRS}/GmlOptionsIO.cpp
+			${osgGML_SOURCE_DIRS}/GraphVisitor.cpp
+			${osgGML_SOURCE_DIRS}/ReaderWriterGML.cpp
+)
+include_directories(${osgGML_INCLUDE_DIRS})
+add_library(${LIBRARY_NAME} ${SOURCES})
 target_link_libraries(${LIBRARY_NAME} ${DEPENDENCIES})
 
-INSTALL(TARGETS ${LIBRARY_NAME}
-	    EXPORT ${EXPORT_NAME}
-        RUNTIME DESTINATION bin
-		LIBRARY DESTINATION lib
-		ARCHIVE DESTINATION lib
-)
-export(TARGETS ${LIBRARY_NAME} FILE "${CMAKE_BINARY_DIR}/osgGML-config.cmake")
-INSTALL(EXPORT ${EXPORT_NAME} DESTINATION lib/osgGML-config.cmake)
-INSTALL(DIRECTORY ./include DESTINATION ${CMAKE_INSTALL_PREFIX})
-
 #
-if(BUILD_TESTS)
-	message(STATUS "BUILD TESTS IS ENABLED")
-endif()
+install(TARGETS ${LIBRARY_NAME}
+        EXPORT ${EXPORT_NAME}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
+		LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
+		ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
+)
+install(FILES ${HEADERS} DESTINATION ${CMAKE_INSTALL_PREFIX}/include)
+
+###########
+
+set(CMAKE_DEST_DIR "share/cmake")
+set(PROJECT_ROOT_DIR "../..")
+configure_file("cmake/${PROJECT_NAME}-config.cmake.in" ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config.cmake @ONLY)
+
+
+message(STATUS "IN CONFIG.IN CURRENT LIST -> ${CMAKE_CURRENT_LIST_FILE}")
+message(STATUS "IN CONFIG.IN PROJECT ROOT -> ${PROJECT_ROOT_DIR}")
+
+
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config.cmake"
+              DESTINATION "${CMAKE_DEST_DIR}"
+)
+install(EXPORT ${EXPORT_NAME} FILE "${PROJECT_NAME}-${EXPORT_NAME}.cmake"
+        DESTINATION "${CMAKE_DEST_DIR}"
+)
