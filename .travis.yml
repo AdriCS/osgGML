@@ -9,7 +9,7 @@ before_install:
 before_script:
  - mkdir build
  - cd build
- - cmake ..
+ - cmake .. -DBUILD_TESTS
 
 script: make
 
