@@ -34,6 +34,13 @@ set(OSGGML_INCLUDE_SUBDIR ${DEFAULT_INCLUDE_SUBDIR} CACHE STRING
 "Subdirectory where header files will be installed")
 set(OSGGML_SHARE_SUBDIR ${DEFAULT_SHARE_SUBDIR} CACHE STRING
 "Subdirectory where data will be installed")
+
+# Full paths for the installation
+set(OSGGML_BIN_DIR ${OSGGML_BIN_SUBDIR})
+set(OSGGML_LIB_DIR ${OSGGML_LIB_SUBDIR})
+set(OSGGML_INCLUDE_DIR ${OSGGML_INCLUDE_SUBDIR})
+set(OSGGML_SHARE_DIR ${OSGGML_SHARE_SUBDIR})
+
 ##
 # Set the build postfix extension according to what configuration is being built.
 set(CMAKE_DEBUG_POSTFIX "d" CACHE STRING "add a postfix, usually d on windows")
@@ -72,10 +79,6 @@ endif()
 find_package(OpenSceneGraph REQUIRED COMPONENTS
                  osg
 				 osgDB
-#				 osgGA
-#				 osgText
-#				 osgUtil
-#                 osgViewer
 				 OpenThreads
 )
 
@@ -90,11 +93,11 @@ set(osgGML_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include")
 set(osgGML_SOURCE_DIRS "${PROJECT_SOURCE_DIR}/src")
 
 set(HEADERS ${osgGML_INCLUDE_DIRS}/DebugUtils.h
-                 ${osgGML_INCLUDE_DIRS}/GmlOptions.h
-				 ${osgGML_INCLUDE_DIRS}/GmlOptionsIO.h
-				 ${osgGML_INCLUDE_DIRS}/GraphVisitor.h
-				 ${osgGML_INCLUDE_DIRS}/ReaderWriterGML.h
-				 ${osgGML_INCLUDE_DIRS}/Setup.h
+            ${osgGML_INCLUDE_DIRS}/GmlOptions.h
+			${osgGML_INCLUDE_DIRS}/GmlOptionsIO.h
+			${osgGML_INCLUDE_DIRS}/GraphVisitor.h
+			${osgGML_INCLUDE_DIRS}/ReaderWriterGML.h
+			${osgGML_INCLUDE_DIRS}/Setup.h
 )
 set(SOURCES ${osgGML_SOURCE_DIRS}/GmlOptions.cpp
             ${osgGML_SOURCE_DIRS}/GmlOptionsIO.cpp
@@ -108,12 +111,21 @@ target_link_libraries(${LIBRARY_NAME} ${DEPENDENCIES})
 #
 install(TARGETS ${LIBRARY_NAME}
         EXPORT ${EXPORT_NAME}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
-		LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
-		ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
+        RUNTIME DESTINATION ${OSGGML_BIN_DIR}
+		LIBRARY DESTINATION ${OSGGML_LIB_DIR}
+		ARCHIVE DESTINATION ${OSGGML_LIB_DIR}
 )
-install(FILES ${HEADERS} DESTINATION ${CMAKE_INSTALL_PREFIX}/include)
+install(FILES ${HEADERS} DESTINATION ${OSGGML_INCLUDE_DIR})
+
+if(BUILD_EXAMPLES)
+  message(STATUS "Building EXAMPLES.")
+  set(OSGGML_EXAMPLES_BIN_DIR share/examples)
+  add_subdirectory(examples/options)
+  add_subdirectory(examples/visitor)
+endif()
 
 ###########
 
 add_subdirectory(cmake)
+
+###########
