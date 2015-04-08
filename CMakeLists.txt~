@@ -4,8 +4,6 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
 project(osgGML)
 
-message(STATUS "${PROJECT_SOURCE_DIR}")
-
 option(BUILD_SHARED_LIBS "Build shared libs" ON)
 option(BUILD_EXAMPLES OFF)
 option(BUILD_TESTS OFF)
@@ -16,30 +14,11 @@ if(NOT CMAKE_BUILD_TYPE)
 endif(NOT CMAKE_BUILD_TYPE)
 
 set(LIBRARY_NAME "osgGML")
-set(EXPORT_NAME "depends")
+set(EXPORT_NAME "OSGGML")
 set(CMAKE_VERBOSE_MAKEFILE ON CACHE BOOL "" FORCE)
-set(CMAKE_COLOR_MAKEFILE ON)
-mark_as_advanced(CMAKE_VERBOSE_MAKEFILE)
-
- # Common locatoins for Unix and Mac OS X
-set(DEFAULT_BIN_SUBDIR bin)
-set(DEFAULT_LIB_SUBDIR lib)
-set(DEFAULT_SHARE_SUBDIR share/cmake)
-set(DEFAULT_INCLUDE_SUBDIR include)
-set(OSGGML_BIN_SUBDIR ${DEFAULT_BIN_SUBDIR} CACHE STRING
-"Subdirectory where executables will be installed")
-set(OSGGML_LIB_SUBDIR ${DEFAULT_LIB_SUBDIR} CACHE STRING
-"Subdirectory where libraries will be installed")
-set(OSGGML_INCLUDE_SUBDIR ${DEFAULT_INCLUDE_SUBDIR} CACHE STRING
-"Subdirectory where header files will be installed")
-set(OSGGML_SHARE_SUBDIR ${DEFAULT_SHARE_SUBDIR} CACHE STRING
-"Subdirectory where data will be installed")
-
-# Full paths for the installation
-set(OSGGML_BIN_DIR ${OSGGML_BIN_SUBDIR})
-set(OSGGML_LIB_DIR ${OSGGML_LIB_SUBDIR})
-set(OSGGML_INCLUDE_DIR ${OSGGML_INCLUDE_SUBDIR})
-set(OSGGML_SHARE_DIR ${OSGGML_SHARE_SUBDIR})
+set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
+set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
+link_directories(${CMAKE_BINARY_DIR}/lib)
 
 ##
 # Set the build postfix extension according to what configuration is being built.
@@ -62,7 +41,7 @@ endif()
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
 
-if(BUILD_USE_LAMBDAS)
+if(USE_LAMBDAS)
   # add_definitions(-DUSE_LAMBDAS) # NOPE. I already do this in 'Setup.h' if there is support for C++0x
   # Compiler-specific C++11 activation.
 	if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
@@ -74,11 +53,15 @@ if(BUILD_USE_LAMBDAS)
 	      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
 		endif()
 	endif()
-endif()
+endif(USE_LAMBDAS)
 
 find_package(OpenSceneGraph REQUIRED COMPONENTS
                  osg
 				 osgDB
+				 osgGA
+				 osgText
+				 osgUtil
+                 osgViewer
 				 OpenThreads
 )
 
@@ -89,50 +72,21 @@ link_directories(${OPENSCENEGRAPH_BINARY_DIRS}/osgPlugins-3.2.1/)
 set(DEPENDENCIES ${OPENSCENEGRAPH_LIBRARIES})
 
 ##
-set(osgGML_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include")
-set(osgGML_SOURCE_DIRS "${PROJECT_SOURCE_DIR}/src")
 
-set(HEADERS ${osgGML_INCLUDE_DIRS}/DebugUtils.h
-            ${osgGML_INCLUDE_DIRS}/GmlOptions.h
-			${osgGML_INCLUDE_DIRS}/GmlOptionsIO.h
-			${osgGML_INCLUDE_DIRS}/GraphVisitor.h
-			${osgGML_INCLUDE_DIRS}/ReaderWriterGML.h
-			${osgGML_INCLUDE_DIRS}/Setup.h
+include_directories(./include)
+add_library(${LIBRARY_NAME} ./src/GmlOptions.cpp
+                   ./src/GmlOptionsIO.cpp
+                   ./src/GraphVisitor.cpp
+				   ./src/ReaderWriterGML.cpp
 )
-set(SOURCES ${osgGML_SOURCE_DIRS}/GmlOptions.cpp
-            ${osgGML_SOURCE_DIRS}/GmlOptionsIO.cpp
-			${osgGML_SOURCE_DIRS}/GraphVisitor.cpp
-			${osgGML_SOURCE_DIRS}/ReaderWriterGML.cpp
-)
-include_directories(${osgGML_INCLUDE_DIRS})
-add_library(${LIBRARY_NAME} ${SOURCES})
 target_link_libraries(${LIBRARY_NAME} ${DEPENDENCIES})
 
-#
-install(TARGETS ${LIBRARY_NAME}
-        EXPORT ${EXPORT_NAME}
-        RUNTIME DESTINATION ${OSGGML_BIN_DIR}
-		LIBRARY DESTINATION ${OSGGML_LIB_DIR}
-		ARCHIVE DESTINATION ${OSGGML_LIB_DIR}
+INSTALL(TARGETS ${LIBRARY_NAME}
+	    EXPORT ${EXPORT_NAME}
+        RUNTIME DESTINATION bin
+		LIBRARY DESTINATION lib
+		ARCHIVE DESTINATION lib
 )
-install(FILES ${HEADERS} DESTINATION ${OSGGML_INCLUDE_DIR})
-
-if(BUILD_EXAMPLES)
-  message(STATUS "Building EXAMPLES.")
-  set(OSGGML_EXAMPLES_BIN_DIR share/examples)
-  add_subdirectory(examples/options)
-  add_subdirectory(examples/visitor)
-endif()
-
-if(BUILD_TESTS)
-  enable_testing()
-  message(STATUS "Building TESTS")
-  set(OSGGML_TESTS_BIN_DIR share/tests)
-  add_subdirectory(test/options)
-endif()
-
-###########
-
-add_subdirectory(cmake)
-
-###########
+export(TARGETS ${LIBRARY_NAME} FILE "${CMAKE_BINARY_DIR}/osggml-config.cmake")
+INSTALL(EXPORT ${EXPORT_NAME} DESTINATION lib/osggml-config.cmake)
+INSTALL(DIRECTORY ./include DESTINATION ${CMAKE_INSTALL_PREFIX})

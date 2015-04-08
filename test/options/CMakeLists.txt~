@@ -2,21 +2,18 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
 project(OptionsTesting)
 
+enable_testing()
+
 set(CMAKE_BUILD_TYPE "RELEASE")
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
 link_directories(${CMAKE_BINARY_DIR}/lib)
 
-include_directories(../../include)
-set(DEPENDENCIES ${DEPENDENCIES} ${LIBRARY_NAME})
+set(BOOST_ROOT "D:/PROYECTOS/SITEGI/LIBRERIAS/Boost")
 
 find_package(Boost REQUIRED COMPONENTS unit_test_framework)
-if(NOT Boost_FOUND)
-  set(BOOST_ROOT "D:/PROYECTOS/SITEGI/LIBRERIAS/Boost")
-endif()
-
 include_directories (${Boost_INCLUDE_DIRS})
-set(DEPENDENCIES ${DEPENDENCIES} ${Boost_LIBRARIES})
+set(DEPENDENCIES ${Boost_LIBRARIES})
 #add_definitions(-DBOOST_TEST_DYN_LINK)
 set(Boost_USE_STATIC_LIBS        OFF)
 set(Boost_USE_MULTITHREADED      ON)
@@ -27,6 +24,18 @@ find_package(OpenSceneGraph REQUIRED COMPONENTS osg osgDB osgUtil OpenThreads)
 include_directories(${OPENSCENEGRAPH_INCLUDE_DIRS})
 link_directories(${OPENSCENEGRAPH_LIBRARY_DIRS})
 set(DEPENDENCIES ${DEPENDENCIES} ${OPENSCENEGRAPH_LIBRARIES})
+
+# Should do first the CMakeLists for the plugin, instead of building it everytime.
+# THIS IS THE NEXT THING TO DO, but for now I just want to check if the tests
+# work.
+include_directories(../../include)
+include_directories(../../src)
+add_library(Options ../../src/GmlOptions.cpp ../../src/GmlOptionsIO.cpp)
+target_link_libraries(Options ${DEPENDENCIES})
+set(DEPENDENCIES ${DEPENDENCIES} Options)
+
+#add_executable(testOptions testOptions.cpp)
+#target_link_libraries(testOptions ${DEPENDENCIES})
 
 MESSAGE(STATUS "CMAKE_CURRENT_BINARY_DIR = ${CMAKE_CURRENT_BINARY_DIR}")
 MESSAGE(STATUS "CMAKE_CURRENT_SOURCE_DIR = ${CMAKE_CURRENT_SOURCE_DIR}")
@@ -50,5 +59,4 @@ foreach(testSrc ${TEST_SRCS})
         #Finally add it to test execution - 
         #Notice the WORKING_DIRECTORY and COMMAND
         add_test(NAME ${testName} COMMAND ${CMAKE_INSTALL_PREFIX}/bin/${testName})
-        install(TARGETS ${testName} RUNTIME DESTINATION ${OSGGML_TESTS_BIN_DIR})
 endforeach(testSrc)
