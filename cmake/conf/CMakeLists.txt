@@ -3,7 +3,7 @@
 ####
 
 set(CMAKE_DEST_DIR "share/cmake")
-set(PROJECT_ROOT_DIR "../..")
+set(PROJECT_ROOT_DIR "../../..")
 
 configure_file("${PROJECT_NAME}-config.cmake.in"
                ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config.cmake @ONLY

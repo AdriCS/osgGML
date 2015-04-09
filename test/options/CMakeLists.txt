@@ -1,3 +1,5 @@
+# SOURCE: http://neyasystems.com/an-engineers-guide-to-unit-testing-cmake-and-boost-unit-tests/
+
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
 project(OptionsTesting)
@@ -37,6 +39,14 @@ MESSAGE(STATUS "INSTALL PREFIX = ${CMAKE_INSTALL_PREFIX}")
 
 file(GLOB TEST_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
 
+set(TEST_DEST ${CMAKE_BINARY_DIR}/testBinaries)
+message(STATUS "CMAKE_BINARY_DIR -> ${CMAKE_BINARY_DIR}")
+message(STATUS "PROJECT_BINARY_DIR -> ${PROJECT_BINARY_DIR}")
+
+#set(TEST_LINK_DEPS ${TEST_LINK_DEPS} "-Wl,-rpath,${CMAKE_BINARY_DIR}")
+set(TEST_LINK_DEPS ${TEST_LINK_DEPS} "-Wl,-rpath,${Boost_LIBRARY_DIRS}")
+
+message(STATUS ${TEST_LINK_DEPS})
 #Run through each source
 foreach(testSrc ${TEST_SRCS})
         #Extract the filename without an extension (NAME_WE)
@@ -50,8 +60,15 @@ foreach(testSrc ${TEST_SRCS})
         #link to Boost libraries AND your targets and dependencies
         target_link_libraries(${testName} ${DEPENDENCIES})
 
+		set_target_properties(${testName} PROPERTIES
+		                      RUNTIME_OUTPUT_DIRECTORY ${TEST_DEST}
+							  LINK_FLAGS "${TEST_LINK_DEPS}"
+        )
+			
         #Finally add it to test execution - 
         #Notice the WORKING_DIRECTORY and COMMAND
-        add_test(NAME ${testName} COMMAND ${CMAKE_INSTALL_PREFIX}/bin/${testName})
-        install(TARGETS ${testName} RUNTIME DESTINATION ${OSGGML_TESTS_BIN_DIR})
+        add_test(NAME ${testName}
+		         WORKING_DIRECTORY ${TEST_DEST}
+				 COMMAND ${TEST_DEST}/${testName}
+		)
 endforeach(testSrc)
