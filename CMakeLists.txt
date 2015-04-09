@@ -124,6 +124,12 @@ if(BUILD_EXAMPLES)
   add_subdirectory(examples/visitor)
 endif()
 
+if(BUILD_TESTS)
+  message(STATUS "Building TESTS")
+  set(OSGGML_TESTS_BIN_DIR share/tests)
+  add_subdirectory(test/options)
+endif()
+
 ###########
 
 add_subdirectory(cmake)

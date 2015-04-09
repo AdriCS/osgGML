@@ -9,10 +9,8 @@ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
 link_directories(${CMAKE_BINARY_DIR}/lib)
 
-find_package(osgGML REQUIRED)
-include_directories(${OSGGML_INCLUDE_DIRS})
-link_directories(${OSGGML_LIBRARY_DIRS})
-set(DEPENDENCIES ${DEPENDENCIES} ${OSGGML_LIBRARIES})
+include_directories(../../include)
+set(DEPENDENCIES ${DEPENDENCIES} ${LIBRARY_NAME})
 
 find_package(Boost REQUIRED COMPONENTS unit_test_framework)
 if(NOT Boost_FOUND)
@@ -20,7 +18,7 @@ if(NOT Boost_FOUND)
 endif()
 
 include_directories (${Boost_INCLUDE_DIRS})
-set(DEPENDENCIES ${Boost_LIBRARIES})
+set(DEPENDENCIES ${DEPENDENCIES} ${Boost_LIBRARIES})
 #add_definitions(-DBOOST_TEST_DYN_LINK)
 set(Boost_USE_STATIC_LIBS        OFF)
 set(Boost_USE_MULTITHREADED      ON)
@@ -57,4 +55,5 @@ foreach(testSrc ${TEST_SRCS})
         #Finally add it to test execution - 
         #Notice the WORKING_DIRECTORY and COMMAND
         add_test(NAME ${testName} COMMAND ${CMAKE_INSTALL_PREFIX}/bin/${testName})
+        install(TARGETS ${testName} RUNTIME DESTINATION ${OSGGML_TESTS_BIN_DIR})
 endforeach(testSrc)
