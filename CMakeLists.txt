@@ -126,6 +126,7 @@ endif()
 
 if(BUILD_TESTS)
   enable_testing()
+
   message(STATUS "Building TESTS")
   set(OSGGML_TESTS_BIN_DIR share/tests)
   add_subdirectory(test/options)
@@ -133,6 +134,6 @@ endif()
 
 ###########
 
-add_subdirectory(cmake)
+add_subdirectory(cmake/conf)
 
 ###########

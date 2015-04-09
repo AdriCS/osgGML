@@ -10,9 +10,12 @@ link_directories(${CMAKE_BINARY_DIR}/lib)
 include_directories(../../include)
 set(DEPENDENCIES ${DEPENDENCIES} ${LIBRARY_NAME})
 
-find_package(Boost REQUIRED COMPONENTS unit_test_framework)
-if(NOT Boost_FOUND)
-  set(BOOST_ROOT "D:/PROYECTOS/SITEGI/LIBRERIAS/Boost")
+# Hack for my weird Boost installation in Windows.
+if(WIN32 AND MINGW)
+    set(BOOST_ROOT "D:/PROYECTOS/SITEGI/LIBRERIAS/Boost")
+	include(../../cmake/find/find_boost.cmake)
+else()
+	find_package(Boost REQUIRED COMPONENTS unit_test_framework)
 endif()
 
 include_directories (${Boost_INCLUDE_DIRS})
@@ -23,7 +26,7 @@ set(Boost_USE_MULTITHREADED      ON)
 set(Boost_USE_STATIC_RUNTIME     OFF)
 set(BOOST_ALL_DYN_LINK           ON)   # force dynamic linking for all libraries
 
-find_package(OpenSceneGraph REQUIRED COMPONENTS osg osgDB osgUtil OpenThreads)
+find_package(OpenSceneGraph REQUIRED COMPONENTS osg osgDB OpenThreads)
 include_directories(${OPENSCENEGRAPH_INCLUDE_DIRS})
 link_directories(${OPENSCENEGRAPH_LIBRARY_DIRS})
 set(DEPENDENCIES ${DEPENDENCIES} ${OPENSCENEGRAPH_LIBRARIES})
