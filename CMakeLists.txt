@@ -128,7 +128,9 @@ if(BUILD_TESTS)
   enable_testing()
 
   message(STATUS "Building TESTS")
+  
   set(OSGGML_TESTS_BIN_DIR share/tests)
+  # :TODO: Create a SHARED TEST CMakeLists, to search for Boost and set paths...
   add_subdirectory(test/options)
 endif()
 
